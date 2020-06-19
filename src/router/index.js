@@ -23,14 +23,18 @@ export default new Router({
           component: () => import('../view/other/test.vue')
         },
         {
-          path:'/editor',
+          path: '/editor',
           component: () => import('../view/other/test.vue')
+        },
+        {
+          path: '/category',
+          component: () => import('../view/petcategory/CategoryShow.vue')
         }
       ]
     },
     {
-      path:'*',
-      redirect:'/dashboard'
+      path: '*',
+      redirect: '/dashboard'
     }
   ]
 })

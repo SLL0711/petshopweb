@@ -64,8 +64,8 @@ export default {
         },
         {
           icon: "el-icon-user-solid",
-          index: "table",
-          title: "基础表格"
+          index: "category",
+          title: "宠物类别"
         },
         {
           icon: "el-icon-star-off",

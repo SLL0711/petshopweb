@@ -5,8 +5,10 @@ import store from "./store/index"
 import elementUI from "element-ui"
 import 'element-ui/lib/theme-chalk/index.css'
 import Request from './network/request'
+import { Msg } from './common/util'
 
 Vue.prototype.myRequest = Request;
+Vue.prototype.Msg = Msg;
 
 Vue.config.productionTip = false
 
@@ -16,5 +18,5 @@ new Vue({
   el: '#app',
   router,
   render: h => h(App),
-  store
+  // store
 })
