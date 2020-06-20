@@ -30,7 +30,7 @@
           :width="item.width"
         >
           <template v-if="item.cellType=='img'">
-            <img style="display:block;height:30px;" :src="item.src" alt />
+            <img style="display:block;" :src="item.src" height="20" alt />
           </template>
           <template v-else-if="item.cellType=='link'">
             <a :href="item.href.value" target="_blank">{{item.href.label||item.href.value}}</a>
@@ -71,6 +71,7 @@
 
 <script>
 export default {
+  inheritAttrs: false,
   name: "pager-table",
   data() {
     return {
@@ -113,7 +114,6 @@ export default {
   },
   methods: {
     btnClick(fn, row) {
-      debugger;
       this.$emit(fn);
     },
     selectrow(selection, row) {
