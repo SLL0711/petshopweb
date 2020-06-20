@@ -71,7 +71,6 @@
 
 <script>
 export default {
-  inheritAttrs: false,
   name: "pager-table",
   data() {
     return {
