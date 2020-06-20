@@ -6,7 +6,7 @@ const axiosConfig = {
 }
 
 const appConfig = {
-
+    docBaseUrl:'http://localhost:5000/StaticFiles'
 }
 
 export {

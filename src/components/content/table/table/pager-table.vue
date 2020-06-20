@@ -22,18 +22,24 @@
         <el-table-column
           :type="item.type||''"
           :key="index"
-          :prop="item.value"
           :label="item.label"
+          :prop="item.value"
           :sortable="item.sortable==1?true:false"
           :min-width="item.minWidth||120"
           :fixed="item.fixed==1?true:false"
           :width="item.width"
         >
-          <template v-if="item.cellType=='img'">
-            <img style="display:block;" :src="item.src" height="20" alt />
-          </template>
-          <template v-else-if="item.cellType=='link'">
-            <a :href="item.href.value" target="_blank">{{item.href.label||item.href.value}}</a>
+          <template slot-scope="slotProp">
+            <template v-if="item.cellType=='img'">
+              <img style="display:block;" :src="slotProp.row[item.value]" height="20" alt />
+            </template>
+            <template v-else-if="item.cellType=='link'">
+              <a
+                :href="slotProp.row[item.value]"
+                target="_blank"
+              >{{slotProp.row[item.hreflabel]||slotProp.row[item.value]}}</a>
+            </template>
+            <template v-else>{{slotProp.row[item.value]}}</template>
           </template>
         </el-table-column>
       </template>
