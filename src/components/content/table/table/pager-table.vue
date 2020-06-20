@@ -20,7 +20,7 @@
       <!-- 循环所有列 -->
       <template v-for="(item,index) in tableInfo.fieldList">
         <el-table-column
-          :type="item.type||''"
+          v-if="!item.type"
           :key="index"
           :label="item.label"
           :prop="item.value"
@@ -42,6 +42,7 @@
             <template v-else>{{slotProp.row[item.value]}}</template>
           </template>
         </el-table-column>
+        <el-table-column :type="item.type" :key="index" v-else></el-table-column>
       </template>
 
       <!-- 加载带按钮组的操作列 -->

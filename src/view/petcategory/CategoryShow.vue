@@ -10,7 +10,6 @@
       :tableInfo="tableInfo"
       v-on:delCategory="delCategory"
       v-on:editCategory="editCategory"
-      @select-all="selectAll"
       v-on:init="initData"
       :pageSizes="[4,8,12]"
     ></pager-table>
@@ -184,10 +183,7 @@ export default {
     editCategory() {
       Msg.error("编辑分类...");
     },
-    tableRowClick() {},
-    selectAll(s) {
-      console.log(s);
-    }
+    tableRowClick() {}
   },
   components: {
     fileUploader,
