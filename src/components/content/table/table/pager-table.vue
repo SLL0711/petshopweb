@@ -120,7 +120,7 @@ export default {
   },
   methods: {
     btnClick(fn, row) {
-      this.$emit(fn);
+      this.$emit(fn, row);
     },
     selectrow(selection, row) {
       this.$emit("select", selection);
@@ -144,6 +144,12 @@ export default {
     //   当前页码
     handleCurrentChange(currentIndex) {
       this.$emit("init", currentIndex, this.pageSize);
+    },
+    // 重新加载table
+    reload() {
+      this.pageIndex = 1;
+      this.pageSize = this.pageSizes[0];
+      this.$emit("init", this.pageIndex, this.pageSize);
     }
   },
   created() {

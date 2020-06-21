@@ -10,13 +10,12 @@
       :on-remove="handleRemove"
       :on-exceed="handleExceed"
       :on-error="handleErr"
-      :file-list="fileList"
+      :file-list.sync="fileList"
       list-type="picture"
       :multiple="isMultiple"
       :on-success="uploadSuccess"
       :before-upload="beforeUpload"
       :modal-append-to-body="false"
-      :resObj="resObj"
     >
       <el-button size="small" type="primary">点击上传</el-button>
     </el-upload>
@@ -35,12 +34,13 @@ export default {
     action: String,
     limit: {
       type: Number,
-      default: 2
+      default: 1
     },
     isMultiple: {
       type: Boolean,
       default: false
     },
+    // 显示遮罩层
     showModal: {
       type: Boolean,
       default: true
@@ -50,8 +50,8 @@ export default {
     return {
       dislogUrl: "",
       dislogShow: false,
-      fileList: [],
-      resObj: ""
+      data: [],
+      fileList: []
     };
   },
   methods: {
@@ -59,25 +59,37 @@ export default {
       this.dislogUrl = file.url;
       this.dislogShow = true;
     },
-    handleRemove() {},
+    handleRemove(file, fileList) {
+      debugger;
+      this.fileList = fileList;
+      // this.data = this.data.filter((v, i) => {
+      //   v.uid !== file.response.uid;
+      // });
+    },
     handleExceed() {
       Msg.warn("超出最大文件限制");
     },
+    // 存储文件上传返回数据 例如fileID
     uploadSuccess(response, file, fileList) {
-      if (response) {
-        // this.resObj = JSON.stringify(response);
-        debugger;
-        this.fileList.push({
-          name: file.name,
-          url: file.url,
-          fileid: response.Obj.fileId
-        });
-      }
+      debugger;
+      this.fileList = fileList;
+      // let obj = {
+      //   uid: file.uid,
+      //   response
+      // };
+      // if (response) {
+      //   this.data.push(obj);
+      // }
     },
     handleErr(err, file, fileList) {
       Msg.error("文件上传失败，请刷新重试");
     },
-    beforeUpload(file) {}
+    beforeUpload(file) {},
+    // 清空图片列表
+    clearFiles() {
+      this.$refs.upload.clearFiles();
+      this.fileList = [];
+    }
   }
 };
 </script>

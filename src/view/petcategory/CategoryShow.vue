@@ -6,8 +6,10 @@
     <el-button type="default" class="tableButton" @click="delsCategory">批量删除</el-button>
 
     <pager-table
+      ref="pagertable"
       v-loading="loading"
       :tableInfo="tableInfo"
+      v-on:selection-change="selectchange"
       v-on:delCategory="delCategory"
       v-on:editCategory="editCategory"
       v-on:init="initData"
@@ -15,15 +17,7 @@
     ></pager-table>
 
     <!-- 抽屉 -->
-    <el-drawer
-      :visible.sync="drawer"
-      :direction="direction"
-      :before-close="handleClose"
-      :show-close="false"
-      :size="'33%'"
-      :destroy-on-close="true"
-      @open="onopen"
-    >
+    <drawer :drawer="drawer" @onclose="onclose" @handleclose="handleClose" @onopened="onopened">
       <el-form
         :model="categoryForm"
         ref="categoryForm"
@@ -45,7 +39,7 @@
           >{{btnObj.btnName}}</el-button>
         </el-form-item>
       </el-form>
-    </el-drawer>
+    </drawer>
   </div>
 </template>
 
@@ -55,6 +49,7 @@ import { Msg } from "../../common/util";
 import { axiosConfig, appConfig } from "../../common/const";
 import fileUploader from "../../components/content/fileuploader/fileUpload";
 import pagertable from "../../components/content/table/table/pager-table";
+import drawer from "../../components/content/drawer/drawer";
 
 export default {
   name: "category",
@@ -83,7 +78,11 @@ export default {
       btnObj: {
         btnName: "提 交",
         isDisabled: false
-      }
+      },
+      // 表单初始化数据
+      currentrowdata: null,
+      submitType: "add",
+      rows: []
     };
   },
   methods: {
@@ -122,7 +121,17 @@ export default {
             {
               label: "创建时间",
               value: "Createdon",
-              minWidth: 220
+              minWidth: 120
+            },
+            {
+              label: "更新人",
+              value: "Modifiedby",
+              minWidth: 120
+            },
+            {
+              label: "更新时间",
+              value: "Modifiedon",
+              minWidth: 120
             },
             {
               label: "图片",
@@ -171,49 +180,126 @@ export default {
       // debugger
       this.drawer = false;
     },
-    onopen() {
-      this.$refs.categoryForm && this.$refs.categoryForm.resetFields();
-      // if (this.$refs.upload.resObj) {
-      //   this.$refs.upload.resObj = null;
-      // }
+    onclose() {
+      this.$refs.categoryForm.resetFields();
+      this.$refs.upload.clearFiles();
     },
-    addCategory() {
-      this.drawer = true;
+    onopened() {
+      debugger;
+      if (!!this.currentrowdata) {
+        this.categoryForm.typename = this.currentrowdata.TypeName;
+        this.$refs.upload.fileList.push({
+          url: this.currentrowdata.imgUrl,
+          name: this.currentrowdata.imgObj.FileName,
+          response: {
+            Obj: {
+              fileId: this.currentrowdata.imgObj.FileId
+            }
+          }
+        });
+      }
     },
     submitForm() {
       debugger;
-      if (!this.$refs.upload.resObj) {
+      let $this = this;
+      if (
+        !this.$refs.upload.fileList ||
+        this.$refs.upload.fileList.length < 1
+      ) {
         Msg.warn("请选择图片");
         return;
       }
 
-      this.btnName = "正在提交...";
+      this.btnObj.btnName = "正在提交...";
+      this.btnObj.isDisabled = true;
 
-      var fileId = JSON.parse(this.$refs.upload.resObj).Obj.fileId;
-      this.myRequest
-        .postUrlencode(
-          "/PetCategory/AddCategory",
-          "TypeName=" + this.categoryForm.typename + "&fileId=" + fileId
-        )
-        .then(res => {});
+      var fileId = this.$refs.upload.fileList[0].response.Obj.fileId;
+
+      let url =
+        this.submitType == "add"
+          ? "/PetCategory/AddCategory"
+          : "/PetCategory/UpdateCategory";
+      let postdata =
+        this.submitType == "add"
+          ? `TypeName=${this.categoryForm.typename}&fileId= ${fileId}`
+          : `TypeName=${this.categoryForm.typename}&fileId= ${fileId}&CategoryId=${this.currentrowdata.CategoryId}`;
+
+      this.myRequest.postUrlencode(url, postdata).then(res => {
+        if (!res.Success) {
+          Msg.error(res.Msg);
+          return;
+        }
+
+        this.btnObj.btnName = "提 交";
+        this.btnObj.isDisabled = false;
+        this.drawer = false;
+        //刷新table
+        $this.$refs.pagertable.reload();
+      });
     },
     importCategory() {
       Msg.info("添加分类...");
     },
     delsCategory() {
-      Msg.warn("添加分类...");
+      if (!this.rows || this.rows.length < 1) {
+        Msg.warn("请选择要删除的数据");
+        return;
+      }
+
+      this.$confirm("是否确认删除？", {
+        type: "warning"
+      })
+        .then(res => {
+          let $this = this;
+          let url = "/PetCategory/DeleteCategorys";
+          let categoryIds = this.rows;
+          this.myRequest.post(url,categoryIds).then(res => {
+            if (!res.Success) {
+              Msg.error(res.Msg);
+              return;
+            }
+            //刷新table
+            $this.$refs.pagertable.reload();
+          });
+        })
+        .catch(err => {});
     },
-    delCategory() {
-      Msg.error("添加分类...");
+    delCategory(row) {
+      debugger;
+      let $this = this;
+      let url = "/PetCategory/DeleteCategory";
+      let postdata = `categoryId=${row.CategoryId}`;
+
+      this.myRequest.postUrlencode(url, postdata).then(res => {
+        if (!res.Success) {
+          Msg.error(res.Msg);
+          return;
+        }
+        //刷新table
+        $this.$refs.pagertable.reload();
+      });
     },
-    editCategory() {
-      Msg.error("编辑分类...");
+    addCategory() {
+      this.drawer = true;
+      this.submitType = "add";
+      this.currentrowdata = null;
+    },
+    editCategory(row) {
+      this.submitType = "edit";
+      this.currentrowdata = row;
+      this.drawer = true;
+    },
+    selectchange(selection) {
+      this.rows = selection.map((v, i) => {
+        return v.CategoryId;
+      });
     },
     tableRowClick() {}
   },
   components: {
     fileUploader,
-    "pager-table": pagertable
+    "pager-table": pagertable,
+    drawer
   },
   created() {}
 };
