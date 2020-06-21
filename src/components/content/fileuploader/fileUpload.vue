@@ -16,7 +16,7 @@
       :on-success="uploadSuccess"
       :before-upload="beforeUpload"
       :modal-append-to-body="false"
-      :resObj ="resObj"
+      :resObj="resObj"
     >
       <el-button size="small" type="primary">点击上传</el-button>
     </el-upload>
@@ -51,7 +51,7 @@ export default {
       dislogUrl: "",
       dislogShow: false,
       fileList: [],
-      resObj:''
+      resObj: ""
     };
   },
   methods: {
@@ -64,9 +64,14 @@ export default {
       Msg.warn("超出最大文件限制");
     },
     uploadSuccess(response, file, fileList) {
-      if(response)
-      {
-        this.resObj = JSON.stringify(response);
+      if (response) {
+        // this.resObj = JSON.stringify(response);
+        debugger;
+        this.fileList.push({
+          name: file.name,
+          url: file.url,
+          fileid: response.Obj.fileId
+        });
       }
     },
     handleErr(err, file, fileList) {

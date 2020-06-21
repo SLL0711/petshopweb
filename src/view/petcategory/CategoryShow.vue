@@ -20,7 +20,9 @@
       :direction="direction"
       :before-close="handleClose"
       :show-close="false"
-      :size="'40%'"
+      :size="'33%'"
+      :destroy-on-close="true"
+      @open="onopen"
     >
       <el-form
         :model="categoryForm"
@@ -36,7 +38,11 @@
           <file-uploader ref="upload" :action="url" :limit="1" :showModal="false"></file-uploader>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="submitForm('categoryForm')">提交</el-button>
+          <el-button
+            type="primary"
+            @click="submitForm('categoryForm')"
+            :disabled="btnObj.isDisabled"
+          >{{btnObj.btnName}}</el-button>
         </el-form-item>
       </el-form>
     </el-drawer>
@@ -73,6 +79,10 @@ export default {
           { required: true, message: "类别名称不能为空" },
           { max: 50, message: "类别名称不能超过50位" }
         ]
+      },
+      btnObj: {
+        btnName: "提 交",
+        isDisabled: false
       }
     };
   },
@@ -88,6 +98,7 @@ export default {
         .then(res => {
           this.loading = false;
           if (!res.Success) {
+            Msg.error(res.Msg);
             return;
           }
 
@@ -157,12 +168,27 @@ export default {
         });
     },
     handleClose(done) {
+      // debugger
       this.drawer = false;
+    },
+    onopen() {
+      this.$refs.categoryForm && this.$refs.categoryForm.resetFields();
+      // if (this.$refs.upload.resObj) {
+      //   this.$refs.upload.resObj = null;
+      // }
     },
     addCategory() {
       this.drawer = true;
     },
     submitForm() {
+      debugger;
+      if (!this.$refs.upload.resObj) {
+        Msg.warn("请选择图片");
+        return;
+      }
+
+      this.btnName = "正在提交...";
+
       var fileId = JSON.parse(this.$refs.upload.resObj).Obj.fileId;
       this.myRequest
         .postUrlencode(
