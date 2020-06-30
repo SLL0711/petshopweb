@@ -7,7 +7,7 @@ export default new Router({
   routes: [
     {
       path: '/',
-      redirect: '/dashboard'
+      redirect: '/login'
     },
     {
       path: '/Home',
@@ -31,6 +31,10 @@ export default new Router({
           component: () => import('../view/petcategory/CategoryShow.vue')
         }
       ]
+    },
+    {
+      path: '/login',
+      component: () => import('../view/home/login.vue')
     },
     {
       path: '*',
