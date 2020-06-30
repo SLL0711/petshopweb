@@ -18,8 +18,8 @@
 </template>
 
 <script>
-// import { Msg } from "../../common/util";
-// import { setLocalStorageToken } from "../../common/util";
+import { Msg } from "../../common/util";
+import { setLocalStorageToken } from "../../common/util";
 export default {
   name: "login",
   data() {
@@ -43,16 +43,17 @@ export default {
           `/Account/Login?userName=${this.form.username}&passWord=${this.form.password}`
         )
         .then(json => {
-          debugger;
+          // debugger;
           if (!json.Success) {
             Msg.error("账号密码不正确");
             return;
           }
 
           //设置token
-          // setLocalStorageToken(json.Obj.token);
+          setLocalStorageToken(json.Obj.token);
 
           //跳转首页
+          this.$router.push("category");
         });
     }
   }

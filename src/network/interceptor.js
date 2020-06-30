@@ -1,7 +1,7 @@
 // axios拦截器
 import axios from 'axios'
 import { axiosConfig } from '../common/const'
-import { getLocalStorageToken, clearLocalStorage } from '../common/util'
+import { getLocalStorageToken, clearLocalStorage, Msg } from '../common/util'
 import { Message } from 'element-ui'
 
 const instance = axios.create({
@@ -26,11 +26,17 @@ instance.interceptors.request.use(config => {
 instance.interceptors.response.use((res) => {
     if (res.data.Code == 401) {
         clearLocalStorage();
+
         //授权未通过,跳转登入页
-        console.log(`授权失败，请重新登入...`)
+        Msg.warn('登录过期，请重新登录...')
+        setTimeout(() => {
+            window.location.hash = '#/login'
+        }, 1000)
+        return Promise.reject();
     }
 
     return res;
+
 }, (err) => {
     if (err.response) {
         return Promise.resolve(err.response.data);
