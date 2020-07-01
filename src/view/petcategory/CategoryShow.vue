@@ -31,7 +31,7 @@
         <el-form-item label="图片">
           <file-uploader ref="upload" :action="url" :limit="1" :showModal="false"></file-uploader>
         </el-form-item>
-        <el-form-item>
+        <el-form-item class="btmbtn">
           <el-button
             type="primary"
             @click="submitForm('categoryForm')"
@@ -116,7 +116,7 @@ export default {
             {
               label: "创建人",
               value: "Createdby",
-              minWidth: 120
+              minWidth: 520
             },
             {
               label: "创建时间",
@@ -253,7 +253,7 @@ export default {
           let $this = this;
           let url = "/PetCategory/DeleteCategorys";
           let categoryIds = this.rows;
-          this.myRequest.post(url,categoryIds).then(res => {
+          this.myRequest.post(url, categoryIds).then(res => {
             if (!res.Success) {
               Msg.error(res.Msg);
               return;
@@ -328,5 +328,9 @@ export default {
   width: 178px;
   height: 178px;
   display: block;
+}
+.btmbtn {
+  position: absolute;
+  bottom: 0;
 }
 </style>

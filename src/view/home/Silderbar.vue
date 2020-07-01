@@ -58,14 +58,14 @@ export default {
       collapse: false,
       items: [
         {
-          icon: "el-icon-eleme",
-          index: "dashboard",
-          title: "系统首页"
-        },
-        {
           icon: "el-icon-user-solid",
           index: "category",
           title: "宠物类别"
+        },
+        {
+          icon: "el-icon-eleme",
+          index: "dashboard",
+          title: "系统首页"
         },
         {
           icon: "el-icon-star-off",

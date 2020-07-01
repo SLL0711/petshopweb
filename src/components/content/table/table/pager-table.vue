@@ -3,6 +3,7 @@
 <template>
   <div>
     <el-table
+      ref="table"
       :data="tableInfo.data"
       border
       stripe
@@ -154,6 +155,15 @@ export default {
   },
   created() {
     this.$emit("init", this.pageIndex, this.pageSize);
+  },
+  mounted() {
+    // table出现fixed列时 拖拽导致布局错乱
+    let _this = this;
+    setInterval(function() {
+      if (_this.$refs.table) {
+        _this.$refs.table.doLayout();
+      }
+    }, 500);
   }
 };
 </script>
