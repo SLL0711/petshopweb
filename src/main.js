@@ -31,10 +31,17 @@ router.beforeEach((to, from, next) => {
   let token = getLocalStorageToken();
   if (!!token) {
     if (to.fullPath == '/login') {
-      next(false);
+      if (from.fullPath != '/') {
+        //登入态禁止返回登入页
+        next(false);
+      } else {
+        //登入态跳转默认页
+        next('/home');
+      }
       return;
     }
   } else {
+    //签出状态默认跳转登入页
     if (to.fullPath != '/login') {
       next('/login')
       return;
