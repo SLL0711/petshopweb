@@ -65,7 +65,7 @@ export default {
   height: 100%;
   background-image: url("../../assets/img/bg.jpg");
   background-repeat: no-repeat;
-  background-size: 100% 100%;
+  /* background-size: 100% 100%; */
 }
 .content {
   height: 228px;

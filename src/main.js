@@ -16,13 +16,31 @@ Vue.use(elementUI)
 
 // 配置全局前置守卫，防止未登入情况下访问授权页面
 router.beforeEach((to, from, next) => {
-  if (to.fullPath != '/login') {
-    //判断当前是否登录态
-    if (!getLocalStorageToken()) {
+  // if (to.fullPath != '/login') {
+  //   //判断当前是否登录态
+  //   if (!token) {
+  //     next('/login')
+  //     return;
+  //   }
+  // } else if (to.fullPath == '/login') {
+  //   if (!!token) {
+  //     return false;
+  //   }
+  // }
+
+  let token = getLocalStorageToken();
+  if (!!token) {
+    if (to.fullPath == '/login') {
+      next(false);
+      return;
+    }
+  } else {
+    if (to.fullPath != '/login') {
       next('/login')
       return;
     }
   }
+
   next();
 })
 
